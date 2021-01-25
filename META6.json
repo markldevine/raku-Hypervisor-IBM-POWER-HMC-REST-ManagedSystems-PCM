@@ -1,0 +1,25 @@
+{
+    "auth":         "github:markldevine",
+    "authors":      [ "Mark Devine <mark@markdevine.com>" ],
+    "depends":      [
+        "Hypervisor::IBM::POWER::HMC::REST::Atom",
+        "Hypervisor::IBM::POWER::HMC::REST::Config",
+        "Hypervisor::IBM::POWER::HMC::REST::ETL",
+        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems"
+  ],
+    "description":  "IBM POWER HMC REST API - ManagedSystems - Performance and Capacity Monitoring",
+    "license":      "Artistic-2.0",
+    "meta-version": 0,
+    "name":         "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems",
+    "perl":         "6.*",
+    "provides":     {
+        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM": "lib/Hypervisor/IBM/POWER/HMC/REST/ManagedSystems/PCM.rakumod",
+    },
+    "resources":    [],
+    "source-url":   "https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-PCM.git",
+    "tags":         [
+        "HMC",
+        "REST"
+    ],
+    "version":      "0.0.1"
+}
