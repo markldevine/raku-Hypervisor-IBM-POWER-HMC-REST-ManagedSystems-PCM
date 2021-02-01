@@ -39,7 +39,7 @@ method init () {
 #%%%
 
     my $xml-path                = self.config.session-manager.fetch('/rest/api/pcm/preferences');
-die;
+die 'HERE';
 
 #%%%
 #%%%
