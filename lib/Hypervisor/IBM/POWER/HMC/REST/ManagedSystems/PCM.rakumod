@@ -45,12 +45,12 @@ die;
 #%%%
 #%%%
 
-    my $proceed-with-name-check = False;
-    $lock.protect({
-        if !$names-checked { $proceed-with-name-check = True; $names-checked = True; }
-    });
-    self.etl-node-name-check    if $proceed-with-name-check;
-    self.config.diag.post:      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
+#   my $proceed-with-name-check = False;
+#   $lock.protect({
+#       if !$names-checked { $proceed-with-name-check = True; $names-checked = True; }
+#   });
+#   self.etl-node-name-check    if $proceed-with-name-check;
+#   self.config.diag.post:      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
 
 #   my $parse-start             = now;
 #   self.etl-parse-path(:$xml-path);
