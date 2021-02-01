@@ -25,6 +25,7 @@ submethod TWEAK {
         if !$analyzed           { $proceed-with-analyze    = True; $analyzed      = True; }
     });
     self.analyze                if $proceed-with-analyze;
+    self.init;
     self;
 }
 
@@ -50,7 +51,7 @@ die 'HERE';
 #       if !$names-checked { $proceed-with-name-check = True; $names-checked = True; }
 #   });
 #   self.etl-node-name-check    if $proceed-with-name-check;
-#   self.config.diag.post:      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
+    self.config.diag.post:      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
 
 #   my $parse-start             = now;
 #   self.etl-parse-path(:$xml-path);
