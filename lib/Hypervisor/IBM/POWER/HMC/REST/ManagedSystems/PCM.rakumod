@@ -1,9 +1,11 @@
+need    Hypervisor::IBM::POWER::HMC::REST::Atom;
 need    Hypervisor::IBM::POWER::HMC::REST::Config;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Analyze;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Dump;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Optimize;
 use     Hypervisor::IBM::POWER::HMC::REST::Config::Traits;
 need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
+#need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM::ManagementConsolePcmPreference;
 unit    class Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
@@ -17,9 +19,8 @@ has     Bool                                                                    
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                               $.config                            is required;
 has                                                                                             %.Managed-System-Names              is required;
 has     Hypervisor::IBM::POWER::HMC::REST::Atom                                                 $.atom                              is conditional-initialization-attribute;
-has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM::ManagementConsolePcmPreference  %.ManagementConsolePcmPreference;
+#has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM::ManagementConsolePcmPreference  %.ManagementConsolePcmPreference;
 
-#   Relative to $xml-entry
 method  xml-name-exceptions () { return set <Metadata etag:etag>; }
 
 submethod TWEAK {
@@ -43,15 +44,19 @@ method init () {
     my $xml-path                            = self.config.session-manager.fetch('/rest/api/pcm/preferences');
     self.config.diag.post:                  sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
 
+    my $parse-start                         = now;
+    self.etl-parse-path(:$xml-path);
+    self.config.diag.post:                  sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'PARSE', sprintf("%.3f", now - $parse-start)) if %*ENV<HIPH_PARSE>;
+
     my $xml-entry                           = self.etl-branch(:TAG<entry>,                                                          :$!xml);
+    my $xml-content                         = self.etl-branch(:TAG<content>,                                                        :xml($xml-entry));
 
     my $proceed-with-name-check = False;
     $lock.protect({
         if !$names-checked                  { $proceed-with-name-check = True; $names-checked = True; }
     });
-    self.etl-node-name-check(:xml($xml-entry)) if $proceed-with-name-check;
+    self.etl-node-name-check(:xml($xml-content)) if $proceed-with-name-check;
 
-    my $xml-content                         = self.etl-branch(:TAG<content>,                                                        :xml($xml-entry));
     my $xml-ManagementConsolePcmPreference  = self.etl-branch(:TAG<ManagementConsolePcmPreference:ManagementConsolePcmPreference>,  :xml($xml-content));
 }
 
