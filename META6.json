@@ -4,7 +4,8 @@
     "depends":      [
         "Hypervisor::IBM::POWER::HMC::REST::Atom",
         "Hypervisor::IBM::POWER::HMC::REST::Config",
-        "Hypervisor::IBM::POWER::HMC::REST::ETL"
+        "Hypervisor::IBM::POWER::HMC::REST::ETL",
+        "URI"
     ],
     "description":  "IBM POWER HMC REST API - ManagedSystems - Performance and Capacity Monitoring",
     "license":      "Artistic-2.0",

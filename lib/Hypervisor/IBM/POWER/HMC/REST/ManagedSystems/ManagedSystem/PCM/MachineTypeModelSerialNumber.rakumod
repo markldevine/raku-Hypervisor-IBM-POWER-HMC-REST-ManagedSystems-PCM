@@ -42,9 +42,9 @@ method init () {
         if !$names-checked      { $proceed-with-name-check = True; $names-checked = True; }
     });
     self.etl-node-name-check    if $proceed-with-name-check;
-    $!MachineType               = self.etl-text(:TAG<MachineType>,  :$!xml))    if self.attribute-is-accessed(self.^name, 'MachineType');
-    $!Model                     = self.etl-text(:TAG<Model>,        :$!xml))    if self.attribute-is-accessed(self.^name, 'Model');
-    $!SerialNumber              = self.etl-text(:TAG<SerialNumber>, :$!xml))    if self.attribute-is-accessed(self.^name, 'SerialNumber');
+    $!MachineType               = self.etl-text(:TAG<MachineType>,  :$!xml) if self.attribute-is-accessed(self.^name, 'MachineType');
+    $!Model                     = self.etl-text(:TAG<Model>,        :$!xml) if self.attribute-is-accessed(self.^name, 'Model');
+    $!SerialNumber              = self.etl-text(:TAG<SerialNumber>, :$!xml) if self.attribute-is-accessed(self.^name, 'SerialNumber');
     $!xml                       = Nil;
     $!initialized               = True;
     self;
