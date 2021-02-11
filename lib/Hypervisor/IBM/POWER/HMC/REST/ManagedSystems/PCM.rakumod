@@ -96,4 +96,12 @@ method init () {
     self;
 }
 
+#   Make a class to hold results & return them
+#   *** Serial queries so that we don't overwhelm an HMC ***
+method query-all () {
+    for %!Managed-System-SystemName-to-Id.keys -> $SystemName {
+        $ = %!PCM-System{$SystemName}.fetch;
+    }
+}
+
 =finish

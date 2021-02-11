@@ -27,7 +27,8 @@ has     Str                                                                     
 has     Str                                                                                                 $.ShortTermMonitorEnabled       is conditional-initialization-attribute;
 has     Str                                                                                                 $.ComputeLTMEnabled             is conditional-initialization-attribute;
 has     Str                                                                                                 $.EnergyMonitorEnabled          is conditional-initialization-attribute;
-has     URI                                                                                                 $.AssociatedManagedSystem       is conditional-initialization-attribute;
+has     URI                                                                                                 $.AssociatedManagedSystem;
+has     Str                                                                                                 $.id;
 
 method  xml-name-exceptions () { return set <Metadata>; }
 
@@ -63,10 +64,26 @@ method init () {
     $!ShortTermMonitorEnabled   = self.etl-text(:TAG<ShortTermMonitorEnabled>,                      :$!xml)     if self.attribute-is-accessed(self.^name, 'ShortTermMonitorEnabled');
     $!ComputeLTMEnabled         = self.etl-text(:TAG<ComputeLTMEnabled>,                            :$!xml)     if self.attribute-is-accessed(self.^name, 'ComputeLTMEnabled');
     $!EnergyMonitorEnabled      = self.etl-text(:TAG<EnergyMonitorEnabled>,                         :$!xml)     if self.attribute-is-accessed(self.^name, 'EnergyMonitorEnabled');
-    $!AssociatedManagedSystem   = self.etl-href(:xml(self.etl-branch(:TAG<AssociatedManagedSystem>, :$!xml)))   if self.attribute-is-accessed(self.^name, 'AssociatedManagedSystem');
+    $!AssociatedManagedSystem   = self.etl-href(:xml(self.etl-branch(:TAG<AssociatedManagedSystem>, :$!xml)));
+    $!id                        = self.AssociatedManagedSystem.path.Str.split(/\//).tail;
     $!xml                       = Nil;
     $!initialized               = True;
     self;
+}
+
+method fetch () {
+    my $fetch-start                             = now;
+    my $xml-path                                = self.config.session-manager.fetch('/rest/api/pcm/ManagedSystem/' ~ $!id ~ '/AggregatedMetrics');
+    self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
+
+    my $parse-start                             = now;
+    self.etl-parse-path(:$xml-path);
+    self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'PARSE', sprintf("%.3f", now - $parse-start)) if %*ENV<HIPH_PARSE>;
+
+#   my $xml-entry                               = self.etl-branch(:TAG<entry>,                                                          :$!xml);
+#   my $xml-content                             = self.etl-branch(:TAG<content>,                                                        :xml($xml-entry));
+#   my $xml-ManagementConsolePcmPreference      = self.etl-branch(:TAG<ManagementConsolePcmPreference:ManagementConsolePcmPreference>,  :xml($xml-content));
+
 }
 
 =finish
