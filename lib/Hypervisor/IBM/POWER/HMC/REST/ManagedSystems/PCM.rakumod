@@ -5,7 +5,7 @@ need    Hypervisor::IBM::POWER::HMC::REST::Config::Dump;
 need    Hypervisor::IBM::POWER::HMC::REST::Config::Optimize;
 use     Hypervisor::IBM::POWER::HMC::REST::Config::Traits;
 need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
-need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM;
+#need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM;
 unit    class Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
             does Hypervisor::IBM::POWER::HMC::REST::Config::Dump
@@ -17,7 +17,7 @@ my      Bool                                                                    
 my      Lock                                                                                    $lock                                       = Lock.new;
 has     Bool                                                                                    $.initialized                               = False;
 has     Hypervisor::IBM::POWER::HMC::REST::Config                                               $.config                                    is required;
-has                                                                                             @.Managed-SystemNames                       is required;
+has                                                                                             %.Managed-System-SystemName-to-Id           is required;
 has     Hypervisor::IBM::POWER::HMC::REST::Atom                                                 $.atom                                      is conditional-initialization-attribute;
 has     Str                                                                                     $.MaximumManagedSystemsForLongTermMonitor   is conditional-initialization-attribute;
 has     Str                                                                                     $.MaximumManagedSystemsForComputeLTM        is conditional-initialization-attribute;
@@ -27,7 +27,7 @@ has     Str                                                                     
 has     Str                                                                                     $.AggregatedMetricsStorageDuration          is conditional-initialization-attribute;
 has                                                                                             %.PCM-System                                is conditional-initialization-attribute;
 
-method  xml-name-exceptions () { return set <Metadata etag:etag>; }
+method  xml-name-exceptions () { return set <Metadata>; }
 
 submethod TWEAK {
     self.config.diag.post:      self.^name ~ '::' ~ &?ROUTINE.name if %*ENV<HIPH_SUBMETHOD>;
@@ -71,28 +71,28 @@ method init () {
     $!MaximumManagedSystemsForShortTermMonitor  = self.etl-text(:TAG<MaximumManagedSystemsForShortTermMonitor>, :xml($xml-ManagementConsolePcmPreference))      if self.attribute-is-accessed(self.^name, 'MaximumManagedSystemsForShortTermMonitor');
     $!MaximumManagedSystemsForEnergyMonitor     = self.etl-text(:TAG<MaximumManagedSystemsForEnergyMonitor>,    :xml($xml-ManagementConsolePcmPreference))      if self.attribute-is-accessed(self.^name, 'MaximumManagedSystemsForEnergyMonitor');
     $!AggregatedMetricsStorageDuration          = self.etl-text(:TAG<AggregatedMetricsStorageDuration>,         :xml($xml-ManagementConsolePcmPreference))      if self.attribute-is-accessed(self.^name, 'AggregatedMetricsStorageDuration');
-    for %!Managed-System-SystemName-to-Id.kv -> $name, $id {
-        %!Managed-System-Id-to-SystemName{$id}  = $name;
-    }
+#   for %!Managed-System-SystemName-to-Id.kv -> $name, $id {
+#       %!Managed-System-Id-to-SystemName{$id}  = $name;
+#   }
     my @ManagedSystemPcmPreferences             = self.etl-branches(:TAG<ManagedSystemPcmPreference>, :xml($xml-ManagementConsolePcmPreference));
     die '# of known Managed Systems != # of retrieved ManagedSystemPcmPreferences' unless %.Managed-System-SystemName-to-Id.elems == @ManagedSystemPcmPreferences.elems;
     my @promises;
     for @ManagedSystemPcmPreferences -> $xml-managed-system-PCM-preference {
         my $SystemName                          = self.etl-text(:TAG<SystemName>, :xml($xml-managed-system-PCM-preference));
         die $SystemName ~ ' encountered in PCM without associated Managed System' unless %!Managed-System-SystemName-to-Id{$SystemName}:exists;
-        @promises.push: start {
-            Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM.new(:$!config, :$xml-ManagedSystemPcmPreference);
-        }
+#       @promises.push: start {
+#           Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM.new(:$!config, :$xml-ManagedSystemPcmPreference);
+#       }
     }
-    unless await Promise.allof(@promises).then({ so all(@promises>>.result) }) {
-        die &?ROUTINE.name ~ ': Not all promises were Kept!';
-    }
-    for @promises -> $promise {
-        my $result                              = $promise.result;
-        my $SystemName                          = $result.SystemName;
-        %!PCM-System{$SystemName}               = $result;
-    }
-    die '# of known Managed Systems != # of instantiated PCM systems' unless %.Managed-System-SystemName-to-Id.elems == %!PCM-System.elems;
+#   unless await Promise.allof(@promises).then({ so all(@promises>>.result) }) {
+#       die &?ROUTINE.name ~ ': Not all promises were Kept!';
+#   }
+#   for @promises -> $promise {
+#       my $result                              = $promise.result;
+#       my $SystemName                          = $result.SystemName;
+#       %!PCM-System{$SystemName}               = $result;
+#   }
+#   die '# of known Managed Systems != # of instantiated PCM systems' unless %.Managed-System-SystemName-to-Id.elems == %!PCM-System.elems;
     $!xml                                       = Nil;
     $!initialized                               = True;
     self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'INITIALIZE', sprintf("%.3f", now - $init-start)) if %*ENV<HIPH_INIT>;

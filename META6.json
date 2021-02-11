@@ -12,7 +12,9 @@
     "name":         "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM",
     "perl":         "6.*",
     "provides":     {
-        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM": "lib/Hypervisor/IBM/POWER/HMC/REST/ManagedSystems/PCM.rakumod"
+        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::PCM": "lib/Hypervisor/IBM/POWER/HMC/REST/ManagedSystems/PCM.rakumod",
+        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM": "lib/Hypervisor/IBM/POWER/HMC/REST/ManagedSystems/ManagedSystem/PCM.rakumod",
+        "Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::MachineTypeModelSerialNumber": "lib/Hypervisor/IBM/POWER/HMC/REST/ManagedSystems/ManagedSystem/PCM/MachineTypeModelSerialNumber.rakumod"
     },
     "resources":    [],
     "source-url":   "https://github.com/markldevine/raku-Hypervisor-IBM-POWER-HMC-REST-ManagedSystems-PCM.git",
