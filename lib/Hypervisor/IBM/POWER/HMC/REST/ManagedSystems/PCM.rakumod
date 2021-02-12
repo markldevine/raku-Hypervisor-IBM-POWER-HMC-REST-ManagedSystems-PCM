@@ -96,11 +96,10 @@ method init () {
     self;
 }
 
-#   Make a class to hold results & return them
-#   *** Serial queries so that we don't overwhelm an HMC ***
-method query-all () {
+method AggregatedMetrics () {
+#   *** Serial queries so that we don't overwhelm the HMC ***
     for %!Managed-System-SystemName-to-Id.keys -> $SystemName {
-        $ = %!PCM-System{$SystemName}.fetch;
+        $ = %!PCM-System{$SystemName}.AggregatedMetrics;
     }
 }
 

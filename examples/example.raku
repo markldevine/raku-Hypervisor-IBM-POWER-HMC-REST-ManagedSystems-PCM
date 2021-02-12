@@ -12,7 +12,7 @@ $mc.ManagedSystems.init;
 #$mc.ManagedSystems.Initialize-Logical-Partitions;
 #$mc.ManagedSystems.Initialize-Virtual-IO-Servers;
 $mc.ManagedSystems.Initialize-PCM;
-$mc.ManagedSystems.PCM.query-all;
+$mc.ManagedSystems.PCM.AggregatedMetrics;
 
 #$mc.ManagedSystems.PCM.dump;
 #$mc.dump;

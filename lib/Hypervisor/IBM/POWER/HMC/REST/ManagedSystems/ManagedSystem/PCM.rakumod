@@ -71,9 +71,24 @@ method init () {
     self;
 }
 
-method fetch () {
+method AggregatedMetrics (Bool :$force-cache) {
     my $fetch-start                             = now;
-    my $xml-path                                = self.config.session-manager.fetch('/rest/api/pcm/ManagedSystem/' ~ $!id ~ '/AggregatedMetrics');
+    my $xml-path                                = self.config.session-manager.fetch('/rest/api/pcm/ManagedSystem/' ~ $!id ~ '/AggregatedMetrics', :$force-cache);
+    self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
+
+    my $parse-start                             = now;
+    self.etl-parse-path(:$xml-path);
+    self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'PARSE', sprintf("%.3f", now - $parse-start)) if %*ENV<HIPH_PARSE>;
+
+#   my $xml-entry                               = self.etl-branch(:TAG<entry>,                                                          :$!xml);
+#   my $xml-content                             = self.etl-branch(:TAG<content>,                                                        :xml($xml-entry));
+#   my $xml-ManagementConsolePcmPreference      = self.etl-branch(:TAG<ManagementConsolePcmPreference:ManagementConsolePcmPreference>,  :xml($xml-content));
+
+}
+
+method ProcessedMetrics (Bool :$force-cache) {
+    my $fetch-start                             = now;
+    my $xml-path                                = self.config.session-manager.fetch('/rest/api/pcm/ManagedSystem/' ~ $!id ~ '/ProcessedMetrics', :$force-cache);
     self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
 
     my $parse-start                             = now;
