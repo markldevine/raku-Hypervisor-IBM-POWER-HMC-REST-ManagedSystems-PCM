@@ -13,7 +13,8 @@ $mc.ManagedSystems.init;
 #$mc.ManagedSystems.Initialize-Virtual-IO-Servers;
 $mc.ManagedSystems.Initialize-PCM;
 #$mc.ManagedSystems.PCM.AggregatedMetrics;
-$mc.ManagedSystems.PCM.ProcessedMetrics;
+#$mc.ManagedSystems.PCM.ProcessedMetrics;
+$mc.ManagedSystems.PCM.RawMetrics-LongTermMonitor;
 
 #$mc.ManagedSystems.PCM.dump;
 #$mc.dump;

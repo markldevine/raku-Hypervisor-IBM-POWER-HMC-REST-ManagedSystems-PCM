@@ -110,4 +110,11 @@ method ProcessedMetrics () {
     }
 }
 
+method RawMetrics-LongTermMonitor () {
+#   *** Serial queries so that we don't overwhelm the HMC ***
+    for %!Managed-System-SystemName-to-Id.keys -> $SystemName {
+        $ = %!PCM-System{$SystemName}.RawMetrics-LongTermMonitor;
+    }
+}
+
 =finish
