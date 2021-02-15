@@ -96,21 +96,21 @@ method init () {
     self;
 }
 
-method AggregatedMetrics () {
+method Initialize-AggregatedMetrics () {
 #   *** Serial queries so that we don't overwhelm the HMC ***
     for %!Managed-System-SystemName-to-Id.keys -> $SystemName {
         $ = %!PCM-System{$SystemName}.AggregatedMetrics;
     }
 }
 
-method ProcessedMetrics () {
+method Initialize-ProcessedMetrics () {
 #   *** Serial queries so that we don't overwhelm the HMC ***
     for %!Managed-System-SystemName-to-Id.keys -> $SystemName {
         $ = %!PCM-System{$SystemName}.ProcessedMetrics;
     }
 }
 
-method RawMetrics-LongTermMonitor () {
+method Initialize-RawMetrics-LongTermMonitor () {
 #   *** Serial queries so that we don't overwhelm the HMC ***
     for %!Managed-System-SystemName-to-Id.keys -> $SystemName {
         $ = %!PCM-System{$SystemName}.RawMetrics-LongTermMonitor;

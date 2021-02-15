@@ -6,6 +6,9 @@ need    Hypervisor::IBM::POWER::HMC::REST::Config::Optimize;
 use     Hypervisor::IBM::POWER::HMC::REST::Config::Traits;
 need    Hypervisor::IBM::POWER::HMC::REST::ETL::XML;
 need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::MachineTypeModelSerialNumber;
+need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::AggregatedMetrics;
+#need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::ProcessedMetrics;
+#need    Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::RawMetrics::LongTermMonitor;
 use     URI;
 unit    class Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM:api<1>:auth<Mark Devine (mark@markdevine.com)>
             does Hypervisor::IBM::POWER::HMC::REST::Config::Analyze
@@ -28,6 +31,9 @@ has     Str                                                                     
 has     Str                                                                                                 $.ComputeLTMEnabled             is conditional-initialization-attribute;
 has     Str                                                                                                 $.EnergyMonitorEnabled          is conditional-initialization-attribute;
 has     URI                                                                                                 $.AssociatedManagedSystem;
+has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::AggregatedMetrics            $.AggregatedMetrics;
+#has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::ProcessedMetrics             $.ProcessedMetrics;
+#has     Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::RawMetrics::LongTermMonitor  $.RawMetrics-LongTermMonitor;
 has     Str                                                                                                 $.id;
 
 method  xml-name-exceptions () { return set <Metadata>; }
@@ -71,7 +77,7 @@ method init () {
     self;
 }
 
-method AggregatedMetrics (Bool :$force-cache) {
+method Initialize-AggregatedMetrics (Bool :$force-cache) {
     my $fetch-start                             = now;
     my $xml-path                                = self.config.session-manager.fetch('/rest/api/pcm/ManagedSystem/' ~ $!id ~ '/AggregatedMetrics', :$force-cache);
     self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
@@ -80,13 +86,15 @@ method AggregatedMetrics (Bool :$force-cache) {
     self.etl-parse-path(:$xml-path);
     self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'PARSE', sprintf("%.3f", now - $parse-start)) if %*ENV<HIPH_PARSE>;
 
+    $!AggregatedMetrics                         = Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::AggregatedMetrics.new(:$!config, :$!xml);
+
 #   my $xml-entry                               = self.etl-branch(:TAG<entry>,                                                          :$!xml);
 #   my $xml-content                             = self.etl-branch(:TAG<content>,                                                        :xml($xml-entry));
 #   my $xml-ManagementConsolePcmPreference      = self.etl-branch(:TAG<ManagementConsolePcmPreference:ManagementConsolePcmPreference>,  :xml($xml-content));
 
 }
 
-method ProcessedMetrics (Bool :$force-cache) {
+method Initialize-ProcessedMetrics (Bool :$force-cache) {
     my $fetch-start                             = now;
     my $xml-path                                = self.config.session-manager.fetch('/rest/api/pcm/ManagedSystem/' ~ $!id ~ '/ProcessedMetrics', :$force-cache);
     self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
@@ -95,13 +103,15 @@ method ProcessedMetrics (Bool :$force-cache) {
     self.etl-parse-path(:$xml-path);
     self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'PARSE', sprintf("%.3f", now - $parse-start)) if %*ENV<HIPH_PARSE>;
 
+#Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::ProcessedMetrics             $.ProcessedMetrics;
+
 #   my $xml-entry                               = self.etl-branch(:TAG<entry>,                                                          :$!xml);
 #   my $xml-content                             = self.etl-branch(:TAG<content>,                                                        :xml($xml-entry));
 #   my $xml-ManagementConsolePcmPreference      = self.etl-branch(:TAG<ManagementConsolePcmPreference:ManagementConsolePcmPreference>,  :xml($xml-content));
 
 }
 
-method RawMetrics-LongTermMonitor (Bool :$force-cache) {
+method Initialize-RawMetrics-LongTermMonitor (Bool :$force-cache) {
     my $fetch-start                             = now;
     my $xml-path                                = self.config.session-manager.fetch('/rest/api/pcm/ManagedSystem/' ~ $!id ~ '/RawMetrics/LongTermMonitor', :$force-cache);
     self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'FETCH', sprintf("%.3f", now - $fetch-start)) if %*ENV<HIPH_FETCH>;
@@ -109,6 +119,8 @@ method RawMetrics-LongTermMonitor (Bool :$force-cache) {
     my $parse-start                             = now;
     self.etl-parse-path(:$xml-path);
     self.config.diag.post:                      sprintf("%-20s %10s: %11s", self.^name.subst(/^.+'::'(.+)$/, {$0}), 'PARSE', sprintf("%.3f", now - $parse-start)) if %*ENV<HIPH_PARSE>;
+
+#Hypervisor::IBM::POWER::HMC::REST::ManagedSystems::ManagedSystem::PCM::RawMetrics::LongTermMonitor  $.RawMetrics-LongTermMonitor;
 
 #   my $xml-entry                               = self.etl-branch(:TAG<entry>,                                                          :$!xml);
 #   my $xml-content                             = self.etl-branch(:TAG<content>,                                                        :xml($xml-entry));

@@ -12,9 +12,9 @@ $mc.ManagedSystems.init;
 #$mc.ManagedSystems.Initialize-Logical-Partitions;
 #$mc.ManagedSystems.Initialize-Virtual-IO-Servers;
 $mc.ManagedSystems.Initialize-PCM;
-#$mc.ManagedSystems.PCM.AggregatedMetrics;
-#$mc.ManagedSystems.PCM.ProcessedMetrics;
-$mc.ManagedSystems.PCM.RawMetrics-LongTermMonitor;
+#$mc.ManagedSystems.PCM.Initialize-AggregatedMetrics;
+#$mc.ManagedSystems.PCM.Initialize-ProcessedMetrics;
+$mc.ManagedSystems.PCM.Initialize-RawMetrics-LongTermMonitor;
 
 #$mc.ManagedSystems.PCM.dump;
 #$mc.dump;
